@@ -1,0 +1,76 @@
+VfrToCfr Plugin for Avisynth 2.5/2.6
+====================================
+
+== Abstract
+*author:*       Jonas Tingeborn       +
+*version:*      1.0                   + 
+*category:*     Frame Rate Conversion + 
+*license:*      BSD                   + 
+*prerequisites:*
+
+  - link:http://code.google.com/p/ffmpegsource/[FFmpegSource] or some other video source
+    filter that is able to properly read VFR clips
+  - A timecodes file for the VFR clip, in matroska timecodes v2 format.
+
+== Description
+
+This plugin converts variable frame rate clips to constant frame rate by
+introducing null frames.
+
+By specifying a constant target frame rate (CFR) in the form of a numerator and
+denominator that yield a frame rate higher than the average frame rate of 
+variable frame rate (VFR) clip, the plugin will insert null frames (exact 
+copies of previous frame(s)) where needed to keep the framerate constant.
+
+The foreseen values of this feature include:
+
+  - Players or encoders that can't deal with variable frames, either at all or
+    by loosing audio sync, will be able to properly play a clip transcoded using
+    this filter.
+
+  - Since no frames are destroyed, and no frames created (only duplicated), it
+    allows other filters, or encoders to simply drop duplicate frames when
+    encoding, which should get the clip back to a VFR clip at the original frame
+    rate, while still giving you the option to process the clip in avisynth without
+    loss of audio sync.
+        
+  - Also, since only frame duping is done, it opens up for the possibility of 
+    intelligent post-processing, such as with mvtools, where dupe frames can be
+    interpolated away, yielding a smoother playback experience.
+
+=== Function signature
+func:VfrToCfr(clip, "optvar:fpsnum", "optvar:fpsden", "optvar:debug")
+
+=== Parameters
+
+optvar:fpsnum ::
+  Numerator of the target FPS. + 
+  For example, if you wanted your target clip to have a constant NTSC frame
+  rate, then this value would be 30000. +
+  This parameter is mandatory.
+  
+optvar:fpsden ::
+  Denominator of the target FPS. + 
+  For a target NTSC frame rate, you'd set this to 1001 as 30000/1001 = 29.97. +
+  This parameter is mandatory.
+  
+optvar:debug  ::
+  Whether or not to show internal information (render it on top of the video) +
+  This parameter is optional and defaults to `false`.
+  
+== Example use
+Convert a realmedia VFR video clip to CFR FILM
+---------------------------------------------------------------------
+ffvideosource( "myclip.rm", timecodes="timecodes.txt" )
+vfrtocfr( timecodes="timecodes.txt", fpsnum=24000, fpsden=1001 )
+
+audiodub( ffaudiosource("myclip.rm") )
+---------------------------------------------------------------------
+_Hint: ffaudiosource may fail to load realmedia audio if it's in cook format, so in
+that case just dump the audio to a wave file and load that file instead using
+wavsource or ffaudiosource._
+  
+== Changelog
+2013-01-15 v1.0 ::
+  initial version
+

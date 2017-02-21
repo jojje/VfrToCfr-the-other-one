@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <avisynth.h>
+#include "avisynth.h"
 #include "framecalc.h"
 
 class VfrToCfr : public GenericVideoFilter {

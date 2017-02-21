@@ -5,5 +5,7 @@ build/ipch
 build/Debug
 build/Release
 build/x64
+build/VfrToCfr.vcxproj.user
 dist
 test/*
+*.zip

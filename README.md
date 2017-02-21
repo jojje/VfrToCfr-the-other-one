@@ -17,6 +17,8 @@ EXAMPLE SCRIPT
     # displayed in the resulting NTSC CFR clip.
     vfrtocfr(timecodes="timecodes.txt", fpsnum=30000, fpsden=1001)
 
+For the VapourSynth equivalent, take a look at `test/test.vpy`
+
 COMPILING
 ---------
 ### Prerequisites ###

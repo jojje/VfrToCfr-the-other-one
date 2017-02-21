@@ -14,7 +14,6 @@ typedef struct {
 class FrameCalculator {
     const char* filename;                                        // Name of the time codes file.
     double fps;                                                  // FPS to convert to
-    double src_fps;                                              // Avg. FPS of the underlying source clip, derived from counting frames and display times.
     std::vector<timecode> timecodes;
 public:
     int getInterpolationInfo(InterpolationInfo* interp, int n);  // Ok the name.. Was intended to be used to provide data to

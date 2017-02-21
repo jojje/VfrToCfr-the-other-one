@@ -15,7 +15,7 @@ using namespace std;
 void FrameCalculator::readTimeCodes() {
     FILE *file;
     char line[512];
-    int frame, display_time, src_num, src_den;
+	int frame, display_time;
 
     if(strlen(filename) == 0) throw exception("Mandatory timecodes filename not provided!");
     fopen_s(&file, filename, "r");
@@ -36,9 +36,7 @@ void FrameCalculator::readTimeCodes() {
         frame++;
     }
     fclose(file);
-    src_num = (int) timecodes.size();
-    src_den = timecodes[timecodes.size()-1].display_time/1000;
-    src_fps = (double)src_num/(double)src_den;
+
     adjust_display_times();
 }
 
@@ -136,9 +134,15 @@ void FrameCalculator::initialize() {
     readTimeCodes();
 }
 
-// Constructor implementation
-FrameCalculator::FrameCalculator(const char* _timecodes_filename, double _num, double _den) :
-  filename(_timecodes_filename), fps(_num/_den) {
+// Constructor implementation. Need to make a copy of the timecodes filename
+// because vaboursynth discards the filename reference directly after plugin construction..
+FrameCalculator::FrameCalculator(const char* _timecodes_filename, double _num, double _den) {
+	fps = _num / _den;
+	char* copy = new char[strlen(_timecodes_filename) + 1];
+	strcpy(copy, _timecodes_filename);
+	filename = copy;
 }
 
-FrameCalculator::~FrameCalculator() {}
+FrameCalculator::~FrameCalculator() {
+	delete(filename);
+}

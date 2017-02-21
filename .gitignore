@@ -4,4 +4,6 @@ build/*.suo
 build/ipch
 build/Debug
 build/Release
+build/x64
 dist
+test/*

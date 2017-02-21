@@ -36,7 +36,7 @@ void FrameCalculator::readTimeCodes() {
         frame++;
     }
     fclose(file);
-    src_num = timecodes.size();
+    src_num = (int) timecodes.size();
     src_den = timecodes[timecodes.size()-1].display_time/1000;
     src_fps = (double)src_num/(double)src_den;
     adjust_display_times();
@@ -114,7 +114,7 @@ int FrameCalculator::getInterpolationInfo(InterpolationInfo* interp, int frame) 
 
     display_time = (int)(frame / fps * 1000);
 
-    vector<timecode> v = findClosestSourceFrames(display_time ,0, timecodes.size()-1);
+    vector<timecode> v = findClosestSourceFrames(display_time ,0, (int)timecodes.size()-1);
 
     if(v.size() == 1) {                   // exact match
         interp->frame1 = v[0].frameno;

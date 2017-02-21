@@ -22,9 +22,12 @@ For the VapourSynth equivalent, take a look at `test/test.vpy`
 COMPILING
 ---------
 ### Prerequisites ###
-* Visual Studio or Microsoft C++ compiler for compiling the plugin
+* Visual Studio 2013 or later for compiling the plugin
 * Asciidoc for generating the help file
-* Ruby for running the Rakefile ("make" script)
 
-Compile the plugin from the build directory by typing nmake, or open up 
-the project in visual studio and compile the project from there.
+Compile the plugin from the Visual Studio GUI. A project and solution file
+can be found in the _build_ directory.
+
+LICENSE
+-------
+The project code and binaries are made available under LGPL v2 license.

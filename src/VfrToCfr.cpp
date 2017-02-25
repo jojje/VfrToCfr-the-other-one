@@ -8,6 +8,16 @@
 
 using namespace std;
 
+// RAII type of lock: https://goo.gl/kgy89M
+struct Synchronize {
+    explicit Synchronize(CRITICAL_SECTION& cs) : lock(cs) {
+        EnterCriticalSection(&lock);
+    }
+    ~Synchronize() { LeaveCriticalSection(&lock); }
+    CRITICAL_SECTION& lock;
+};
+CRITICAL_SECTION initCs;       // "mutex" to synchronize the lazy initialization
+
 // ==========================================================================
 // PRIVATE methods
 // ==========================================================================
@@ -30,19 +40,18 @@ double VfrToCfr::GetFps(PClip clip) {
 }
 
 void VfrToCfr::lazyInitialize(IScriptEnvironment* env) {
-    if    (state == initialized)  return;
-    while (state == initializing) Sleep(1);         // Give first thread time to initialize if filter is run with MT
-    state = initializing;
-    try {
-        framecalc.initialize();
-        if(framecalc.getTimeCodes().size() != child->GetVideoInfo().num_frames) {
-            throw exception("Error, timecodes file and source clip do not contain the same number of frames!");;
+    Synchronize lock(initCs);
+    if (state != initialized) {    // First thread trying to init, go ahead.
+        try {
+            framecalc.initialize();
+            if(framecalc.getTimeCodes().size() != child->GetVideoInfo().num_frames) {
+                throw exception("Error, timecodes file and source clip do not contain the same number of frames!");;
+            }
+            state = initialized;
+        } catch(exception e) {
+            raiseError(env, e.what());
         }
-        state = initialized;
-    } catch(exception e) {
-        state = notInitialized;
-        raiseError(env, e.what());
-    }
+	}
 }
 
 // ==========================================================================
@@ -92,6 +101,7 @@ VfrToCfr::VfrToCfr(PClip _child, const char* timecodes_filename, int fps_num, in
 VfrToCfr::~VfrToCfr() {}
 
 AVSValue __cdecl Create_VfrToCfr(AVSValue args, void* user_data, IScriptEnvironment* env) {
+    InitializeCriticalSection(&initCs);
     return new VfrToCfr(args[0].AsClip(),
          args[1].AsString(""),         // timecodes parameter
          args[2].AsInt(0),             // fps_num parameter

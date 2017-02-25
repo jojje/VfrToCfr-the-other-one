@@ -8,8 +8,7 @@ class VfrToCfr : public GenericVideoFilter {
 
     enum State {                               // Add lifecycle phases and guards just in case someone against all reason decides
         notInitialized,                        // to run this script threaded. It's plenty fast without and the user will run 
-        initializing,                          // out of IO bandwidth before they'll get this filter to make a dent on CPU...
-        initialized
+        initialized,                           // out of IO bandwidth before they'll get this filter to make a dent on CPU...
     };
     State volatile state;                      // The initialization state of the filter
 

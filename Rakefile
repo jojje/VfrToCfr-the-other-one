@@ -1,6 +1,6 @@
 task :default => [:package]
 
-task :package => [:doc] do
+task :package => [:clean, :build, :doc] do
   version = File.read('build/VfrToCfr.rc').split("\n").
                  grep(/define VERSION/).first.split.last.gsub('"','')
 
@@ -17,6 +17,16 @@ task :package => [:doc] do
 	
 	cd "dist"
 	sh "zip vfrtocfr-#{version}.zip -r 32bit 64bit test *.html *.md"
+end
+
+task :build do
+  chdir "build"
+  %w[Win32 x64].each do |platform|
+    %w[Release Debug].each do |config|
+      sh "msbuild /t:Build /p:Configuration=#{config};Platform=#{platform}"
+    end
+  end
+  chdir ".."
 end
 
 task :doc => [:dirs] do

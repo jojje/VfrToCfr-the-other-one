@@ -64,9 +64,8 @@ void FrameCalculator::adjust_display_times() {
 
 // Returns a vector containing one time code if an exact match on the sought display time was found,
 // or two time codes if the sought display time falls in between the two time codes.
-vector<timecode> FrameCalculator::findClosestSourceFrames(int display_time, int left, int right) {
+vector<timecode> FrameCalculator::findClosestSourceFrames(int display_time) {
     vector<timecode> ret;
-    int mid;
 
     if(timecodes.size() < 1) {
         timecode t = {0,0};
@@ -80,22 +79,26 @@ vector<timecode> FrameCalculator::findClosestSourceFrames(int display_time, int 
         return ret;
     }
 
-    if(left > right) {                     // Return the two frames having display times surrounding the
-        ret.push_back(timecodes[right]);   // time we're after, if no exact frame (display time) was found.
-        ret.push_back(timecodes[left]);    // I.e. f1 < display_time < f2
-        return ret;
-    }
+	int left = 0, mid = 0, mid_display_time = 0;
+	int right = (int)timecodes.size() - 1;
 
-    mid = left + ((right - left) / 2);
+	while (true) {
+		mid = (right + left) / 2;
+		mid_display_time = timecodes[mid].display_time;
 
-    if(timecodes[mid].display_time == display_time) {
-        ret.push_back(timecodes[mid]);
-        return ret;
-    } else if(timecodes[mid].display_time > display_time) {
-        return findClosestSourceFrames(display_time, left, mid - 1);
-    }
-    return findClosestSourceFrames(display_time, mid + 1, right);
-
+		if(left > right) {                     // Return the two frames having display times surrounding the
+			ret.push_back(timecodes[right]);   // time we're after, if no exact frame (display time) was found.
+			ret.push_back(timecodes[left]);    // I.e. f1 < display_time < f2
+			return ret;
+		} else if (mid_display_time < display_time) {
+			left = mid + 1;
+		} else if (mid_display_time > display_time) {
+			right = mid - 1;
+		} else {
+			ret.push_back(timecodes[mid]);     // Return frame with exact display time match
+			return ret;
+		}
+	}
 }
 
 // ==========================================================================
@@ -112,7 +115,7 @@ int FrameCalculator::getInterpolationInfo(InterpolationInfo* interp, int frame) 
 
     display_time = (int)(frame / fps * 1000);
 
-    vector<timecode> v = findClosestSourceFrames(display_time ,0, (int)timecodes.size()-1);
+    vector<timecode> v = findClosestSourceFrames(display_time);
 
     if(v.size() == 1) {                   // exact match
         interp->frame1 = v[0].frameno;

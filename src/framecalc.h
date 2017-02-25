@@ -28,7 +28,7 @@ public:
     ~FrameCalculator();
 private:
     void readTimeCodes();
-    std::vector<timecode> findClosestSourceFrames(int frame, int start, int end);
+    std::vector<timecode> findClosestSourceFrames(int frame);
 
     // Fixes the intra display times, by replacing frames that are listed as one millisecond
     // greater than a previous frame, through estimating the real display time given surrounding

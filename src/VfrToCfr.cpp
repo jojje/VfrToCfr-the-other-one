@@ -51,7 +51,7 @@ void VfrToCfr::lazyInitialize(IScriptEnvironment* env) {
         } catch(exception e) {
             raiseError(env, e.what());
         }
-	}
+    }
 }
 
 // ==========================================================================
@@ -72,8 +72,7 @@ PVideoFrame __stdcall VfrToCfr::GetFrame(int n, IScriptEnvironment* env) {
         char msg[256];
         if(ip.frame1 == ip.frame2) srcFrame = (float) ip.frame1;
         else srcFrame = ip.frame1 + (((float)ip.pct)/100);
-        sprintf(msg, "Current frame:  %d",   n);             f = subtitle(env,f,msg, 0,1); 
-        sprintf(msg, "Source frame:   %.2f", srcFrame);      f = subtitle(env,f,msg, 0,2);
+        sprintf(msg, "Current frame:  %d",   n);             f = subtitle(env,f,msg, 0,1);        sprintf(msg, "Source frame:   %.2f", srcFrame);      f = subtitle(env,f,msg, 0,2);
         sprintf(msg, "Current FPS:    %.3f", GetFps(this));  f = subtitle(env,f,msg, 0,3);
         sprintf(msg, "Source FPS:     %.3f", GetFps(child)); f = subtitle(env,f,msg, 0,4);
     }
@@ -82,8 +81,7 @@ PVideoFrame __stdcall VfrToCfr::GetFrame(int n, IScriptEnvironment* env) {
 
 // Constructor implementation
 VfrToCfr::VfrToCfr(PClip _child, const char* timecodes_filename, int fps_num, int fps_den, bool _debug, IScriptEnvironment* env) :
-    GenericVideoFilter(_child), 
-    framecalc(FrameCalculator(timecodes_filename, fps_num, fps_den)),
+    GenericVideoFilter(_child),    framecalc(FrameCalculator(timecodes_filename, fps_num, fps_den)),
     debug(_debug), state(notInitialized) {
 
     VideoInfo info = child->GetVideoInfo();
@@ -93,9 +91,7 @@ VfrToCfr::VfrToCfr(PClip _child, const char* timecodes_filename, int fps_num, in
 
     vi.fps_numerator   = fps_num;
     vi.fps_denominator = fps_den;
-    vi.num_frames      = (int)( info.num_frames * 
-                           ((double)info.fps_denominator / (double)info.fps_numerator) * 
-                           ((double)fps_num / (double)fps_den) );
+    vi.num_frames      = (int)( info.num_frames *                           ((double)info.fps_denominator / (double)info.fps_numerator) *                           ((double)fps_num / (double)fps_den) );
 }
 
 VfrToCfr::~VfrToCfr() {}

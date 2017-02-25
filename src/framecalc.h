@@ -17,9 +17,9 @@ class FrameCalculator {
     std::vector<timecode> timecodes;
 public:
     int getInterpolationInfo(InterpolationInfo* interp, int n);  // Ok the name.. Was intended to be used to provide data to
-                                                                 //   support temporal "perfect" VFR->CFR by using motion interpolation, 
+                                                                 //   support temporal "perfect" VFR->CFR by using motion interpolation,
                                                                  //   but that seems more like a user space task atm, so only actually
-                                                                 //   using one info element from the reqult get a "rough hit" on the 
+                                                                 //   using one info element from the reqult get a "rough hit" on the
                                                                  //   source frame. In other words, favor perfect *picture* to perfect
                                                                  //   temporal *position*.
     std::vector<timecode> getTimeCodes();                        // Returns the underlying vector of all time codes

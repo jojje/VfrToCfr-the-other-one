@@ -7,7 +7,7 @@ class VfrToCfr : public GenericVideoFilter {
     FrameCalculator framecalc;                 // A helper to calculate which source frame corresponds to which display frame.
 
     enum State {                               // Add lifecycle phases and guards just in case someone against all reason decides
-        notInitialized,                        // to run this script threaded. It's plenty fast without and the user will run 
+        notInitialized,                        // to run this script threaded. It's plenty fast without and the user will run
         initialized,                           // out of IO bandwidth before they'll get this filter to make a dent on CPU...
     };
     State volatile state;                      // The initialization state of the filter

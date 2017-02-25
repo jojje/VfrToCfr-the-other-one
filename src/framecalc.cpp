@@ -15,7 +15,7 @@ using namespace std;
 void FrameCalculator::readTimeCodes() {
     FILE *file;
     char line[512];
-	int frame, display_time;
+    int frame, display_time;
 
     if(strlen(filename) == 0) throw exception("Mandatory timecodes filename not provided!");
     fopen_s(&file, filename, "r");
@@ -54,7 +54,7 @@ void FrameCalculator::adjust_display_times() {
         disp_delta   = timecodes[i+j+1].display_time - timecodes[i].display_time;  // <rant>
         delta_fps    = ( (j+1) ) / ( (double)disp_delta ) * 1000;                  // Oh how I hate C, with its constant risk of overflow.
         delta_frames = j;                                                          // That's why there are a gazillion type conversions and
-        for(j=1; j <= delta_frames; j++) {                                         // odd operational order, to keep the ints within bounds! 
+        for(j=1; j <= delta_frames; j++) {                                         // odd operational order, to keep the ints within bounds!
             new_dt = timecodes[i].display_time + (int)( j / delta_fps * 1000);     // </rant>
             timecodes[i+j].display_time = new_dt;
         }
@@ -79,26 +79,26 @@ vector<timecode> FrameCalculator::findClosestSourceFrames(int display_time) {
         return ret;
     }
 
-	int left = 0, mid = 0, mid_display_time = 0;
-	int right = (int)timecodes.size() - 1;
+    int left = 0, mid = 0, mid_display_time = 0;
+    int right = (int)timecodes.size() - 1;
 
-	while (true) {
-		mid = (right + left) / 2;
-		mid_display_time = timecodes[mid].display_time;
+    while (true) {
+        mid = (right + left) / 2;
+        mid_display_time = timecodes[mid].display_time;
 
-		if(left > right) {                     // Return the two frames having display times surrounding the
-			ret.push_back(timecodes[right]);   // time we're after, if no exact frame (display time) was found.
-			ret.push_back(timecodes[left]);    // I.e. f1 < display_time < f2
-			return ret;
-		} else if (mid_display_time < display_time) {
-			left = mid + 1;
-		} else if (mid_display_time > display_time) {
-			right = mid - 1;
-		} else {
-			ret.push_back(timecodes[mid]);     // Return frame with exact display time match
-			return ret;
-		}
-	}
+        if(left > right) {                     // Return the two frames having display times surrounding the
+            ret.push_back(timecodes[right]);   // time we're after, if no exact frame (display time) was found.
+            ret.push_back(timecodes[left]);    // I.e. f1 < display_time < f2
+            return ret;
+        } else if (mid_display_time < display_time) {
+            left = mid + 1;
+        } else if (mid_display_time > display_time) {
+            right = mid - 1;
+        } else {
+            ret.push_back(timecodes[mid]);     // Return frame with exact display time match
+            return ret;
+        }
+    }
 }
 
 // ==========================================================================
@@ -140,13 +140,13 @@ void FrameCalculator::initialize() {
 // Constructor implementation. Need to make a copy of the timecodes filename
 // because vaboursynth discards the filename reference directly after plugin construction..
 FrameCalculator::FrameCalculator(const char* _timecodes_filename, double _num, double _den) {
-	size_t len = strlen(_timecodes_filename) + 1;
-	char* copy = new char[len];
-	strcpy_s(copy, len, _timecodes_filename);
-	filename = copy;
-	fps = _num / _den;
+    size_t len = strlen(_timecodes_filename) + 1;
+    char* copy = new char[len];
+    strcpy_s(copy, len, _timecodes_filename);
+    filename = copy;
+    fps = _num / _den;
 }
 
 FrameCalculator::~FrameCalculator() {
-	delete(filename);
+    delete(filename);
 }

@@ -140,10 +140,11 @@ void FrameCalculator::initialize() {
 // Constructor implementation. Need to make a copy of the timecodes filename
 // because vaboursynth discards the filename reference directly after plugin construction..
 FrameCalculator::FrameCalculator(const char* _timecodes_filename, double _num, double _den) {
-	fps = _num / _den;
-	char* copy = new char[strlen(_timecodes_filename) + 1];
-	strcpy(copy, _timecodes_filename);
+	size_t len = strlen(_timecodes_filename) + 1;
+	char* copy = new char[len];
+	strcpy_s(copy, len, _timecodes_filename);
 	filename = copy;
+	fps = _num / _den;
 }
 
 FrameCalculator::~FrameCalculator() {

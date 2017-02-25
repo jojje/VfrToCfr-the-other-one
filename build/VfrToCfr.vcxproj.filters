@@ -24,7 +24,7 @@
     <ClInclude Include="..\src\framecalc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\avisynthplus\avisynth.h">
+    <ClInclude Include="..\src\avisynth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

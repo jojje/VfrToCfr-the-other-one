@@ -156,7 +156,7 @@
     <ClCompile Include="..\src\Interface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\avisynthplus\avisynth.h" />
+    <ClInclude Include="..\src\avisynth.h" />
     <ClInclude Include="..\src\framecalc.h" />
     <ClInclude Include="..\src\VfrToCfr.h" />
     <ClInclude Include="..\src\info.h" />

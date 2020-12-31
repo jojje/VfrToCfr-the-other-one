@@ -124,7 +124,7 @@ int FrameCalculator::getInterpolationInfo(InterpolationInfo* interp, int frame) 
     } else {                              // sought frame is in between two real frames (doesn't exist and would need to be created)
         interp->frame1 = v[0].frameno;
         interp->frame2 = v[1].frameno;
-        interp->pct = 100 * (v[1].display_time - display_time) / (v[1].display_time - v[0].display_time);
+        interp->pct = 100 * (display_time - v[0].display_time) / (v[1].display_time - v[0].display_time);
     }
     return 0;
 }

@@ -1,6 +1,7 @@
 build/VfrToCfr.opensdf
 build/VfrToCfr.sdf
 build/*.suo
+build/.vs
 build/ipch
 build/Debug
 build/Release

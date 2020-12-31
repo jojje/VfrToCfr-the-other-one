@@ -59,23 +59,30 @@ void VfrToCfr::lazyInitialize(IScriptEnvironment* env) {
 // ==========================================================================
 
 PVideoFrame __stdcall VfrToCfr::GetFrame(int n, IScriptEnvironment* env) {
-    float srcFrame;
     InterpolationInfo ip;
     PVideoFrame f;
-
-    lazyInitialize(env);
+    int pickedSrcFrame;
 
     framecalc.getInterpolationInfo(&ip,n);
-    f = child->GetFrame(ip.frame1,env);
+
+    if (ip.frame1 == ip.frame2) {
+        pickedSrcFrame = ip.frame1;
+    } else {
+        pickedSrcFrame = ip.pct < 50 ? ip.frame1 : ip.frame2;
+    }
+    f = child->GetFrame(pickedSrcFrame,env);
 
     if(debug) {
         char msg[256];
-        if(ip.frame1 == ip.frame2) srcFrame = (float) ip.frame1;
-        else srcFrame = ip.frame1 + (((float)ip.pct)/100);
-        sprintf(msg, "Current frame:  %d",   n);             f = subtitle(env,f,msg, 0,1);
-        sprintf(msg, "Source frame:   %.2f", srcFrame);      f = subtitle(env,f,msg, 0,2);
-        sprintf(msg, "Current FPS:    %.3f", GetFps(this));  f = subtitle(env,f,msg, 0,3);
-        sprintf(msg, "Source FPS:     %.3f", GetFps(child)); f = subtitle(env,f,msg, 0,4);
+        float srcFrame = ip.frame1 + (((float)ip.pct)/100);
+        int y = 0;
+        sprintf(msg, "Current frame:  %d", n);               f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Source frame:   %.2f", srcFrame);      f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Frame 1:        %d", ip.frame1);       f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Frame 2:        %d", ip.frame2);       f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Picked frame:   %d", pickedSrcFrame);  f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Current FPS:    %.3f", GetFps(this));  f = subtitle(env,f,msg,0,y++);
+        sprintf(msg, "Source FPS:     %.3f", GetFps(child)); f = subtitle(env,f,msg,0,y++);
     }
     return f;
 }
@@ -91,11 +98,25 @@ VfrToCfr::VfrToCfr(PClip _child, const char* timecodes_filename, int fps_num, in
     if (fps_num <= 0) raiseError(env, "FPS numerator must be provided and be greater than 0");
     if (fps_den <= 0) raiseError(env, "FPS denominator must be provided and be greater than 0");
 
+    lazyInitialize(env);
+
+    vector<timecode> timecodes = framecalc.getTimeCodes();
+    int lastTimecodeDisplayTime = timecodes.empty() ? 0 : timecodes.back().display_time;
+
+    double newFps = (double)fps_num / (double)fps_den;
+    double frameDurationMs = 1000.0 / newFps;
+    double videoDurationInFrames = (lastTimecodeDisplayTime + frameDurationMs) / frameDurationMs;
+
     vi.fps_numerator   = fps_num;
     vi.fps_denominator = fps_den;
-    vi.num_frames      = (int)( info.num_frames *
-                            ((double)info.fps_denominator / (double)info.fps_numerator) *
-                            ((double)fps_num / (double)fps_den) );
+    vi.num_frames      = videoDurationInFrames;
+
+    if (info.audio_samples_per_second > 0)
+    {
+        // Clip has audio which must be trimmed or padded to avoid sync issues
+        double videoDuration = vi.num_frames / newFps;
+        vi.num_audio_samples = videoDuration * (double)vi.audio_samples_per_second;
+    }
 }
 
 VfrToCfr::~VfrToCfr() {}

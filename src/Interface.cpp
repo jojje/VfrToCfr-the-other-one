@@ -1,6 +1,6 @@
 #include "VfrToCfr.h"
 
-#define VERSION "1.0"
+#define VERSION "1.2"
 
 AVSValue __cdecl Create_VfrToCfr(AVSValue args, void* user_data, IScriptEnvironment* env);
 

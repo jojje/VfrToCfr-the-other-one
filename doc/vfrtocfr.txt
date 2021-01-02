@@ -66,6 +66,10 @@ vfrtocfr( timecodes="timecodes.txt", fpsnum=24000, fpsden=1001 )
 
 audiodub( ffaudiosource("myclip.rm") )
 ---------------------------------------------------------------------
+If you are having audio sync issues you may want to dub the audio before applying
+vfrtocfr. If the clip has audio, it will be fitted to match the length of the video.
+This usually means either trimming or padding the audio by a few milliseconds.
+
 _Hint: ffaudiosource may fail to load realmedia audio if it's in cook format, so in
 that case just dump the audio to a wave file and load that file instead using
 wavsource or ffaudiosource._
